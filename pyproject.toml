@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "challenge"
+version = "0.1.0"
+description = ""
+authors = ["Derek <derek.coelho@cerc.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.0"
+uvicorn = "^0.31.0"
+python-jose = "^3.3.0"
+pydantic = "^2.9.2"
+httpx = "^0.27.2"
+python-multipart = "^0.0.12"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+pytest-asyncio = "^0.24.0"
+black = "^24.10.0"
+coverage = "^7.6.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
