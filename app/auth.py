@@ -18,8 +18,10 @@ fake_users_db = {
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+
 def verify_password(plain_password, password):
     return plain_password == password
+
 
 def authenticate_user(form_data):
     username = form_data.get("username")
@@ -36,6 +38,7 @@ def authenticate_user(form_data):
     access_token = jwt.encode(token_data, SECRET_KEY, algorithm=ALGORITHM)
     return {"access_token": access_token, "token_type": "bearer"}
 
+
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(status_code=401, detail="Invalid token")
 
@@ -50,8 +53,10 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
     return {"username": username, "role": role}
 
+
 async def get_current_active_user(current_user: dict = Depends(get_current_user)):
     return current_user
+
 
 async def get_admin_user(current_user: dict = Depends(get_current_user)):
     if current_user["role"] != "admin":

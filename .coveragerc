@@ -1,0 +1,18 @@
+
+[run]
+omit =
+    app/main.py
+    tests/*
+
+[report]
+# Show the line numbers of missing lines
+show_missing = True
+
+# Exclude standard library code from coverage report
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self\.debug
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:

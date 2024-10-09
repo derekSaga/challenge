@@ -1,18 +1,18 @@
-from datetime import datetime
-from datetime import timedelta
-
-from fastapi import Depends
-from fastapi import FastAPI
+from datetime import UTC
+from datetime import datetime, timedelta
+from fastapi import Depends, FastAPI
+from fastapi import HTTPException
 from fastapi.openapi.utils import get_openapi
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import Response
 from jose import jwt
 
-from app.routers import admin
-from app.routers import user
+from app.routers import admin, user
 
 app = FastAPI()
 app.include_router(user.router)
 app.include_router(admin.router)
+
 # Fake database of users for the example
 fake_users_db = {
     "user": {"username": "user", "role": "user", "password": "L0XuwPOdS5U"},
@@ -25,15 +25,15 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 def authenticate_user(form_data: OAuth2PasswordRequestForm):
-    user = fake_users_db.get(form_data.username)
-    if user and user["password"] == form_data.password:
-        return user
+    user_in = fake_users_db.get(form_data.username)
+    if user_in and user_in["password"] == form_data.password:
+        return user_in
     return None
 
 
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -71,10 +71,16 @@ app.openapi = custom_openapi
 # Endpoint to generate JWT token using username and password
 @app.post("/token")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(form_data)
-    if not user:
-        return {"error": "Invalid credentials"}
+    user_in = authenticate_user(form_data)
+    if not user_in:
+        raise HTTPException(status_code=400, detail={"error": "Invalid credentials"})
 
     # Create JWT token
-    access_token = create_access_token(data={"sub": user["username"], "role": user["role"]})
+    access_token = create_access_token(data={"sub": user_in["username"], "role": user_in["role"]})
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    return {"status": "OK", "timestamp": datetime.now(UTC)}
