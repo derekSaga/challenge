@@ -32,8 +32,8 @@ fake_users_db = {
 1. Clone este repositório:
 
    ```bash
-   git clone <URL do repositório>
-   cd <nome_do_projeto>
+   git clone https://github.com/derekSaga/challenge.git
+   cd challenge
    ```
 
 2. Configure o arquivo `.env` (se necessário).
