@@ -1,0 +1,11 @@
+
+# docker-compose.yml for FastAPI Project
+
+version: "3.9"
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=development
